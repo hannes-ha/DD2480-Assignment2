@@ -74,7 +74,7 @@
           <artifactId>exec-maven-plugin</artifactId>
           <version>3.0.0</version>
           <configuration>
-              <mainClass>lab2.App</mainClass>
+              <mainClass>group10.App</mainClass>
           </configuration>
         </plugin>
       </plugins>
