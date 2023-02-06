@@ -14,6 +14,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import group10.Util;
+
 /**
  * ContinuousIntegrationServer which acts as webhook for CI tasks.
  * See the Jetty documentation for API documentation of those classes.
@@ -74,6 +76,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         try {
             // TODO: GET request logic
             // Check the target endpoint, provide log or something, if we're going for P+
+            // Otherwise I don't think we even need to handle GET requests at all
 
             response.setStatus(HttpServletResponse.SC_OK);
 
@@ -97,15 +100,20 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
         BufferedReader reader = request.getReader();
         try {
-            // TODO: POST request logic
-            // Run CI (separate method or class) - git clone -> mvn build -> mvn test -> report results
-
             // Parse the POST request
             JSONObject payload = (JSONObject) new JSONParser().parse(reader);
-            runContinuousIntegration(payload);
+
+            // Check if it's a commit/push event
+            if (Util.isCommitEvent(payload)) {
+                runContinuousIntegration(payload);
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "POST request is not a push/commit event.");
+            }
 
             response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().println("POST request handled.");
+
+            // Maybe replace with a logger
+            System.out.println("POST request handled.");
         } catch (ParseException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Something went wrong while handling your POST request.");
         }
@@ -117,6 +125,6 @@ public class ContinuousIntegrationServer extends AbstractHandler {
      * @param payload the body of the POST request as JSON
      */
     private void runContinuousIntegration(JSONObject payload) {
-
+        // TODO: git clone -> mvn build -> mvn test -> report results
     }
 }
