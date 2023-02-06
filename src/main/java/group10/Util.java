@@ -56,7 +56,8 @@ public class Util {
      * @return a String with the clone URL (https)
      */
     public static String getCloneURL(JSONObject payload) {
-        return payload.get("url") + ".git";
+        JSONObject repository = (JSONObject) payload.get("repository");
+        return repository.get("url") + ".git";
     }
 
     /**

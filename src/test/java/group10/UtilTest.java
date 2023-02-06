@@ -94,12 +94,15 @@ public class UtilTest {
     /**
      * Assert equals (expected = "https://github.com/hannes-ha/DD2480-Assignment2.git")
      * Should return "https://github.com/hannes-ha/DD2480-Assignment2.git" since payload
-     * has url "https://github.com/hannes-ha/DD2480-Assignment2"
+     * has repository url "https://github.com/hannes-ha/DD2480-Assignment2"
      */
     @Test
     public void testUtil_getCloneURL() {
         JSONObject payload = new JSONObject();
-        payload.put("url", "https://github.com/hannes-ha/DD2480-Assignment2");
+        JSONObject repository = new JSONObject();
+
+        repository.put("url", "https://github.com/hannes-ha/DD2480-Assignment2");
+        payload.put("repository", repository);
 
         String result = Util.getCloneURL(payload);
         assertEquals("https://github.com/hannes-ha/DD2480-Assignment2.git", result);
