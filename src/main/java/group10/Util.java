@@ -8,8 +8,8 @@ public class Util {
 
     /**
      * Checks if the head_commit parameter is present and its commit id is not null
-     * (Only the push event contains the head_commit parameter, thus it can be used
-     * to check for a push event)
+     * (only the push event contains the head_commit parameter, thus it can be used
+     * to check for a push event).
      *
      * @param payload event payload
      * @return true if the payload describes a push/commit event, else false
@@ -23,5 +23,18 @@ public class Util {
         }
         return false;
     }
+
+    /**
+     * Gets the branch tied to the event.
+     *
+     * @param payload event payload
+     * @return a String with the branch name of the event
+     */
+    public static String getBranch(JSONObject payload) {
+        String refValue = (String) payload.get("ref");
+        return refValue.split("/")[2];
+    }
+
+    
 
 }

@@ -61,4 +61,18 @@ public class UtilTest {
         assertFalse(result);
     }
 
+    /**
+     * Assert equals (expected = "main")
+     * Should return "main" since the payload refers
+     * to the main branch
+     */
+    @Test
+    public void testUtil_getBranch_Positive() {
+        JSONObject payload = new JSONObject();
+        payload.put("ref", "refs/heads/main");
+
+        String result = Util.getBranch(payload);
+        assertEquals("main", result);
+    }
+
 }
