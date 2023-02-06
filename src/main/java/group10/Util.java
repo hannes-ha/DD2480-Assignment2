@@ -46,4 +46,14 @@ public class Util {
         return (String) repository.get("name");
     }
 
+    /**
+     * Gets the address for cloning the repository using https.
+     *
+     * @param payload event payload
+     * @return a String with the clone URL (https)
+     */
+    public static String getCloneURL(JSONObject payload) {
+        return payload.get("url") + ".git";
+    }
+
 }
