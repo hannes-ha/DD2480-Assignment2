@@ -4,10 +4,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  * ContinuousIntegrationServer which acts as webhook for CI tasks.
@@ -90,14 +95,28 @@ public class ContinuousIntegrationServer extends AbstractHandler {
     private void handlePostRequest(HttpServletRequest request, HttpServletResponse response, final String target)
             throws IOException {
 
+        BufferedReader reader = request.getReader();
         try {
             // TODO: POST request logic
             // Run CI (separate method or class) - git clone -> mvn build -> mvn test -> report results
 
+            // Parse the POST request
+            JSONObject payload = (JSONObject) new JSONParser().parse(reader);
+            runContinuousIntegration(payload);
+
             response.setStatus(HttpServletResponse.SC_OK);
             response.getWriter().println("POST request handled.");
-        } catch (IOException e) {
+        } catch (ParseException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Something went wrong while handling your POST request.");
         }
+    }
+
+    /**
+     * Runs the methods required for CI
+     *
+     * @param payload the body of the POST request as JSON
+     */
+    private void runContinuousIntegration(JSONObject payload) {
+
     }
 }
