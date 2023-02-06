@@ -2,6 +2,9 @@ package group10;
 
 import org.json.simple.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+
 public class Util {
 
     // Parsing of JSON payload based on: https://gist.github.com/gjtorikian/5171861
@@ -54,6 +57,22 @@ public class Util {
      */
     public static String getCloneURL(JSONObject payload) {
         return payload.get("url") + ".git";
+    }
+
+    /**
+     * Gets the BufferedReader contents as a String.
+     *
+     * @param in input BufferedReader
+     * @return String containing the contents of in
+     * @throws IOException if an I/O error occurs
+     */
+    public static String convertToString(BufferedReader in) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        String readLine;
+        while ((readLine = in.readLine()) != null) {
+            builder.append(readLine);
+        }
+        return builder.toString();
     }
 
 }
