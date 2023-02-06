@@ -35,6 +35,15 @@ public class Util {
         return refValue.split("/")[2];
     }
 
-    
+    /**
+     * Gets the repository name tied to the event.
+     *
+     * @param payload event payload
+     * @return a String with the name of the repository
+     */
+    public static String getRepositoryName(JSONObject payload) {
+        JSONObject repository = (JSONObject) payload.get("repository");
+        return (String) repository.get("name");
+    }
 
 }

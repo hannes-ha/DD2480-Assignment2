@@ -67,12 +67,29 @@ public class UtilTest {
      * to the main branch
      */
     @Test
-    public void testUtil_getBranch_Positive() {
+    public void testUtil_getBranch() {
         JSONObject payload = new JSONObject();
         payload.put("ref", "refs/heads/main");
 
         String result = Util.getBranch(payload);
         assertEquals("main", result);
+    }
+
+    /**
+     * Assert equals (expected = "test-repo-name")
+     * Should return "test-repo-name" since the payload is tied
+     * to the repository with name "test-repo-name"
+     */
+    @Test
+    public void testUtil_getRepositoryName() {
+        JSONObject payload = new JSONObject();
+        JSONObject repository = new JSONObject();
+
+        repository.put("name", "test-repo-name");
+        payload.put("repository", repository);
+
+        String result = Util.getRepositoryName(payload);
+        assertEquals("test-repo-name", result);
     }
 
 }
