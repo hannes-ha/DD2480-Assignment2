@@ -1,13 +1,16 @@
 package group10;
+ 
+import org.eclipse.jetty.server.Server;
 
-/**
- * Hello world!
- *
- */
+
 public class App 
 {
-    public static void main( String[] args )
+    public static void main( String[] args ) throws Exception
     {
-        System.out.println( "Hello World!" );
+        System.out.println( "Starting CI server..." );
+        Server server = new Server(8080);
+        server.setHandler(new ContinuousIntegrationServer()); 
+        server.start();
+        server.join();
     }
 }
