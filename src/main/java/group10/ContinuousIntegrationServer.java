@@ -93,9 +93,11 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             throws IOException {
 
         BufferedReader reader = request.getReader();
+
         try {
             // Parse the POST request
-            JSONObject payload = (JSONObject) new JSONParser().parse(reader);
+            String jsonString = Util.convertToString(reader);
+            JSONObject payload = (JSONObject) new JSONParser().parse(jsonString);
 
             // Check if it's a commit/push event
             if (Util.isCommitEvent(payload)) {
@@ -108,7 +110,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
             // Maybe replace with a logger
             System.out.println("POST request handled.");
-        } catch (ParseException e) {
+        } catch (ParseException | IOException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Something went wrong while handling your POST request.");
         }
     }
@@ -120,7 +122,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
      */
     private void runContinuousIntegration(JSONObject payload) {
         // TODO: git clone -> mvn build -> mvn test -> report results
-        System.out.println("Running git clone...");
+        System.out.println("Running git clone on " + Util.getCloneURL(payload) + " branch " + Util.getBranch(payload));
         System.out.println("Running mvn build...");
         System.out.println("Running mvn test...");
         System.out.println("Result: SUCCESS");
