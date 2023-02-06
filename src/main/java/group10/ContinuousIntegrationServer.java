@@ -3,36 +3,101 @@ package group10;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
- 
+
 import java.io.IOException;
- 
+
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
-/** 
- Skeleton of a ContinuousIntegrationServer which acts as webhook
- See the Jetty documentation for API documentation of those classes.
-*/
+/**
+ * ContinuousIntegrationServer which acts as webhook for CI tasks.
+ * See the Jetty documentation for API documentation of those classes.
+ */
 
 public class ContinuousIntegrationServer extends AbstractHandler {
-    
+
+    /**
+     * Handles incoming requests by calling appropriate methods for
+     * either POST or GET requests.
+     *
+     * @param target      the target endpoint
+     * @param baseRequest the base request
+     * @param request     the request (servletrequest)
+     * @param response    the response (servletresponse)
+     * @throws IOException if unable to parse
+     */
+    @Override
     public void handle(String target,
                        Request baseRequest,
                        HttpServletRequest request,
-                       HttpServletResponse response) 
-                       throws IOException, ServletException {
-    
-        response.setContentType("text/html;charset=utf-8");
-        response.setStatus(HttpServletResponse.SC_OK);
-        baseRequest.setHandled(true);
-
-        System.out.println(target);
+                       HttpServletResponse response)
+            throws IOException {
 
         // here you do all the continuous integration tasks
         // for example
         // 1st clone your repository
         // 2nd compile the code
 
-        response.getWriter().println("CI job done");
+        response.setContentType("text/html;charset=utf-8");
+        baseRequest.setHandled(true);
+
+        try {
+            String requestMethod = request.getMethod();
+            if ("GET".equalsIgnoreCase(requestMethod)) {
+                handleGetRequest(request, response, target);
+            } else if ("POST".equalsIgnoreCase(requestMethod)) {
+                handlePostRequest(request, response, target);
+            }
+            response.getWriter().println("CI job done");
+
+        } catch (IOException e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Something went wrong handling your request.");
+        }
+    }
+
+    /**
+     * Handles GET requests.
+     *
+     * @param request the request
+     * @param response the response
+     * @param target the target endpoints
+     * @throws IOException on problem parsing or handling the request
+     */
+    private void handleGetRequest(HttpServletRequest request, HttpServletResponse response, final String target)
+            throws IOException {
+
+        try {
+            // TODO: GET request logic
+            // Check the target endpoint, provide log or something, if we're going for P+
+
+            response.setStatus(HttpServletResponse.SC_OK);
+
+            // Maybe we should have a logger? The server keeps complaining about SLF4J
+            response.getWriter().println("GET request handled.");
+        } catch (IOException e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Something went wrong while handling your GET request.");
+        }
+    }
+
+    /**
+     * Handles POST requests.
+     *
+     * @param request the request
+     * @param response the response
+     * @param target the target endpoint
+     * @throws IOException on problem parsing or handling the request
+     */
+    private void handlePostRequest(HttpServletRequest request, HttpServletResponse response, final String target)
+            throws IOException {
+
+        try {
+            // TODO: POST request logic
+            // Run CI (separate method or class) - git clone -> mvn build -> mvn test -> report results
+
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.getWriter().println("POST request handled.");
+        } catch (IOException e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Something went wrong while handling your POST request.");
+        }
     }
 }
