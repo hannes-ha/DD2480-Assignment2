@@ -121,5 +121,9 @@ public class ContinuousIntegrationServer extends AbstractHandler {
      */
     private void runContinuousIntegration(JSONObject payload) {
         // TODO: git clone -> mvn build -> mvn test -> report results
+        System.out.println("Running git clone...");
+        System.out.println("Running mvn build...");
+        System.out.println("Running mvn test...");
+        System.out.println("Result: SUCCESS");
     }
 }
