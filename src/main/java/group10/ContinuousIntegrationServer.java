@@ -48,7 +48,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             if ("GET".equalsIgnoreCase(requestMethod)) {
                 handleGetRequest(request, response, target);
             } else if ("POST".equalsIgnoreCase(requestMethod)) {
-                handlePostRequest(request, response, target);
+                handlePostRequest(request, response);
             }
             response.getWriter().println("CI job done");
 
@@ -87,10 +87,9 @@ public class ContinuousIntegrationServer extends AbstractHandler {
      *
      * @param request  the request
      * @param response the response
-     * @param target   the target endpoint
      * @throws IOException on problem parsing or handling the request
      */
-    private void handlePostRequest(HttpServletRequest request, HttpServletResponse response, final String target)
+    private void handlePostRequest(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
         BufferedReader reader = request.getReader();
