@@ -1,11 +1,10 @@
 package group10;
 
 import static org.junit.Assert.*;
+
 import org.junit.Test;
 
 import org.json.simple.JSONObject;
-
-import group10.Util;
 
 public class UtilTest {
 

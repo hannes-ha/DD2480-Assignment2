@@ -40,11 +40,6 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                        HttpServletResponse response)
             throws IOException {
 
-        // here you do all the continuous integration tasks
-        // for example
-        // 1st clone your repository
-        // 2nd compile the code
-
         response.setContentType("text/html;charset=utf-8");
         baseRequest.setHandled(true);
 
@@ -65,9 +60,9 @@ public class ContinuousIntegrationServer extends AbstractHandler {
     /**
      * Handles GET requests.
      *
-     * @param request the request
+     * @param request  the request
      * @param response the response
-     * @param target the target endpoints
+     * @param target   the target endpoints
      * @throws IOException on problem parsing or handling the request
      */
     private void handleGetRequest(HttpServletRequest request, HttpServletResponse response, final String target)
@@ -90,9 +85,9 @@ public class ContinuousIntegrationServer extends AbstractHandler {
     /**
      * Handles POST requests.
      *
-     * @param request the request
+     * @param request  the request
      * @param response the response
-     * @param target the target endpoint
+     * @param target   the target endpoint
      * @throws IOException on problem parsing or handling the request
      */
     private void handlePostRequest(HttpServletRequest request, HttpServletResponse response, final String target)
@@ -120,7 +115,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
     }
 
     /**
-     * Runs the methods required for CI
+     * Runs the methods required for CI.
      *
      * @param payload the body of the POST request as JSON
      */
