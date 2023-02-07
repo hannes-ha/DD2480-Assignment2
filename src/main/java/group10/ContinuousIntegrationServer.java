@@ -89,6 +89,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                     }
                 }
                 response.getWriter().println("</ul>");
+                response.getWriter().println("<a href='/'> << Go back</a>");
 
                 // if its a file in history folder, serve it
             } else if (request.getPathInfo().matches("/history/.*")) {
@@ -105,6 +106,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                 if (file.isFile()) {
                     response.getWriter().println("<h1>Build log for " + withoutExtension + "</h1>");
                     response.getWriter().println(Files.readString(Path.of("history/" + filename)));
+                    response.getWriter().println("<a href='/history'> << Back to history</a>");
                 } else {
                     // if file doesnt exist, return 404
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
