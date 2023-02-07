@@ -36,7 +36,7 @@ public class Util {
     public static String getBranch(JSONObject payload) {
         String refValue = (String) payload.get("ref");
         return refValue.split("/")[2];
-        //com
+        //comasdk
     }
 
     /**
