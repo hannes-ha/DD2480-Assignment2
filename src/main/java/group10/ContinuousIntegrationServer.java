@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
@@ -124,6 +125,15 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         // TODO: git clone -> mvn build -> mvn test -> report results
         System.out.println("Running git clone on " + Util.getCloneURL(payload) + " branch " + Util.getBranch(payload));
         System.out.println("Running mvn build...");
+
+        boolean buildStatus = false;
+        MavenRunner mavenRunner = new MavenRunner("./build");
+        try {
+            buildStatus = mavenRunner.runBuildAndTests();
+        } catch (MavenInvocationException e) {
+            System.out.println("Build failed.");
+        }
+
         System.out.println("Running mvn test...");
         System.out.println("Result: SUCCESS");
     }
