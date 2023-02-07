@@ -15,17 +15,26 @@ public class GitRunner {
      */
     public static void cloneRepo(String repoURL, String branch) throws GitAPIException {
         // create new folder to clone repo in (if already exists: delete)
-        File repoDir = new File("/build");
-        if (repoDir.exists()) {
-            repoDir.delete();
-        }
+        File repoDir = new File("./build");
+        if (repoDir.exists()) deleteDir(repoDir);
         repoDir.mkdir();
 
         // clone the repo from the given branch
         Git.cloneRepository()
                 .setURI(repoURL)
-                .setDirectory(new File("/build"))
+                .setDirectory(new File("./build"))
                 .setBranch("refs/heads/" + branch)
                 .call();
+    }
+
+    /**
+     * Deletes an entire directory and all files in it
+     * @param dir the directory to delete
+     */
+    public static void deleteDir(File dir) {
+        for (File subFile : dir.listFiles()) {
+            if (subFile.isDirectory()) deleteDir(subFile);
+            subFile.delete();
+        }
     }
 }
