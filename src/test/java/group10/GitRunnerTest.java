@@ -8,6 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GitRunnerTest {
     @Test
     public void testGitRunner_Invalid() {
-        assertThrows(GitAPIException.class, () -> GitRunner.cloneRepo("", "", ""));
+        assertThrows(GitAPIException.class, () -> GitRunner.cloneRepo("", ""));
     }
 }
