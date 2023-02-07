@@ -33,6 +33,23 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         // 1st clone your repository
         // 2nd compile the code
 
-        response.getWriter().println("CI job done");
+        // Create string array with 'mvn' and 'build' as arguments
+        boolean builds = false;
+        int ret = 0;
+        try {
+            String[] commands = {"mvn", "build"};
+            Process p = Runtime.getRuntime().exec(commands);
+            ret = p.waitFor();
+            builds = ret == 0;
+        } catch (Exception e) {
+            builds = false;
+        }
+        String buildStatus = builds ? "Success" : "Failed";
+
+        response.getWriter().println("<h1>CI job done</h1>");
+        response.getWriter().println("<ul>");
+        response.getWriter().println("<li>Build status: " + buildStatus + ret + "</li>");
+        response.getWriter().println("</ul>");
+
     }
 }
