@@ -124,6 +124,22 @@ public class ContinuousIntegrationServer extends AbstractHandler {
     private void runContinuousIntegration(JSONObject payload) {
         // TODO: git clone -> mvn build -> mvn test -> report results
         System.out.println("Running git clone on " + Util.getCloneURL(payload) + " branch " + Util.getBranch(payload));
+        boolean cloneSuccess = true;
+        try {
+            GitRunner.cloneRepo(Util.getCloneURL(payload), Util.getBranch(payload));
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            cloneSuccess = false;
+        }
+
+        if (!cloneSuccess) {
+
+        }
+        else {
+
+        }
+
         System.out.println("Running mvn build...");
 
         boolean buildStatus = false;
