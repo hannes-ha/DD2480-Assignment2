@@ -9,27 +9,46 @@ import group10.ContinuousIntegrationServer.BuildStatus;
 
 public class MavenRunner {
 
-    private String buildPath;
+    private final Invoker invoker;
 
     public MavenRunner(String buildPath) {
-        this.buildPath = buildPath;
+        invoker = new DefaultInvoker();
+        invoker.setLocalRepositoryDirectory(new File(buildPath));
     }
 
-    public ContinuousIntegrationServer.BuildStatus runBuildAndTests() throws MavenInvocationException {
+    public BuildStatus runMvnCompile() {
         InvocationRequest request = new DefaultInvocationRequest();
-        request.setPomFile(new File("./pom.xml"));
-        request.setGoals(Collections.singletonList("test"));
+        request.setGoals(Collections.singletonList("compile"));
+        request.setBatchMode(true);
+        request.setQuiet(true);
 
-        Invoker invoker = new DefaultInvoker();
-        invoker.setLocalRepositoryDirectory(new File(this.buildPath));
+        try {
+            InvocationResult result = invoker.execute(request);
 
-        InvocationResult result = invoker.execute(request);
-
-        if (result.getExitCode() != 0) {
+            if (result.getExitCode() != 0) {
+                return BuildStatus.BUILD_FAILED;
+            }
+        } catch (MavenInvocationException e) {
             return BuildStatus.BUILD_FAILED;
         }
-
         return BuildStatus.BUILD_SUCCEEDED;
     }
 
+    public BuildStatus runMvnTest() {
+        InvocationRequest request = new DefaultInvocationRequest();
+        request.setGoals(Collections.singletonList("test"));
+        request.setBatchMode(true);
+        request.setQuiet(true);
+
+        try {
+            InvocationResult result = invoker.execute(request);
+
+            if (result.getExitCode() != 0) {
+                return BuildStatus.TESTS_FAILED;
+            }
+        } catch (MavenInvocationException e) {
+            return BuildStatus.TESTS_FAILED;
+        }
+        return BuildStatus.TESTS_SUCCEEDED;
+    }
 }
