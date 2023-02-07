@@ -5,6 +5,8 @@ import org.apache.maven.shared.invoker.*;
 import java.io.File;
 import java.util.Collections;
 
+import group10.ContinuousIntegrationServer.BuildStatus;
+
 public class MavenRunner {
 
     private String buildPath;
@@ -13,7 +15,7 @@ public class MavenRunner {
         this.buildPath = buildPath;
     }
 
-    public boolean runBuildAndTests() throws MavenInvocationException {
+    public ContinuousIntegrationServer.BuildStatus runBuildAndTests() throws MavenInvocationException {
         InvocationRequest request = new DefaultInvocationRequest();
         request.setPomFile(new File("./pom.xml"));
         request.setGoals(Collections.singletonList("test"));
@@ -24,10 +26,10 @@ public class MavenRunner {
         InvocationResult result = invoker.execute(request);
 
         if (result.getExitCode() != 0) {
-            return false;
+            return BuildStatus.BUILD_FAILED;
         }
 
-        return true;
+        return BuildStatus.BUILD_SUCCEEDED;
     }
 
 }

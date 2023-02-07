@@ -2,7 +2,6 @@ package group10;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,8 +13,6 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
-import group10.Util;
 
 /**
  * ContinuousIntegrationServer which acts as webhook for CI tasks.
@@ -122,7 +119,10 @@ public class ContinuousIntegrationServer extends AbstractHandler {
      * @param payload the body of the POST request as JSON
      */
     private void runContinuousIntegration(JSONObject payload) {
-        // TODO: git clone -> mvn build -> mvn test -> report results
+
+        BuildStatus status = BuildStatus.PENDING;
+
+        // Running clone
         System.out.println("Running git clone on " + Util.getCloneURL(payload) + " branch " + Util.getBranch(payload));
         boolean cloneSuccess = true;
         try {
@@ -134,23 +134,32 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         }
 
         if (!cloneSuccess) {
-
+            status = BuildStatus.CLONE_FAILED;
         }
         else {
-
+            status = BuildStatus.CLONE_SUCCEEDED;
+            // Running mvn
+            System.out.println("Running mvn test...");
+            boolean buildStatus = false;
+            MavenRunner mavenRunner = new MavenRunner("./build");
+            try {
+                status = mavenRunner.runBuildAndTests();
+            } catch (MavenInvocationException e) {
+                System.out.println("Build failed.");
+            }
         }
 
-        System.out.println("Running mvn build...");
-
-        boolean buildStatus = false;
-        MavenRunner mavenRunner = new MavenRunner("./build");
-        try {
-            buildStatus = mavenRunner.runBuildAndTests();
-        } catch (MavenInvocationException e) {
-            System.out.println("Build failed.");
-        }
-
-        System.out.println("Running mvn test...");
-        System.out.println("Result: SUCCESS");
+        System.out.println("Result:" + status);
     }
+
+    public enum BuildStatus {
+        PENDING,
+        CLONE_SUCCEEDED,
+        CLONE_FAILED,
+        BUILD_SUCCEEDED,
+        BUILD_FAILED,
+        TESTS_SUCCEEDED,
+        TESTS_FAILED
+    }
+
 }
