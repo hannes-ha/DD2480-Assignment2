@@ -13,6 +13,7 @@ Maven quickstart [Guide](https://maven.apache.org/guides/getting-started/maven-i
 4. mvn exec:java
 
 ## Team
+Going off of the checklist for the Essence standard, we conclude that our team is at least in the "Collaborating" stage. At this point in time, we have all gotten to know each other and are constantly communicating in order to organise all the work among us. Overall we are making solid progress, and are structuring up the work so that different parts can easily be assigned between us team members. It is hard to say whether we fully achieve the status of "Performing", since our way of working could be improved further so that we work even more efficiently together.
 
 ## Individual Contributions
 
