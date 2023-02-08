@@ -76,6 +76,12 @@ public class Util {
         return builder.toString();
     }
 
+    /**
+     * get the commit hash from the event payload
+     *
+     * @param payload event payload
+     * @return the id of the commit
+     */
     public static String getCommitHash(JSONObject payload) {
         JSONObject headCommit = (JSONObject) payload.get("head_commit");
         String id = (String) headCommit.get("id");

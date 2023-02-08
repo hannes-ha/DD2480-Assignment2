@@ -5,6 +5,9 @@ import java.io.File;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
+/**
+ * Class for handling running of Git.
+ */
 public class GitRunner {
     /**
      * Clones a git repository using the given URL and branch name, and puts it
