@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.eclipse.jetty.server.Request;
@@ -179,7 +180,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
         LogWriter logWriter = new LogWriter();
         logWriter.write("Commit hash: " + commitHash);
-        String mavenOutput = "";
+        ArrayList<String> mavenOutput = new ArrayList<String>();
 
         // Running clone
         System.out.println("Running git clone on " + Util.getCloneURL(payload) + " branch " + Util.getBranch(payload));
@@ -237,7 +238,11 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         logWriter.write(testsStatus.toString());
 
         logWriter.write("Maven output (compile & test):");
-        logWriter.write(mavenOutput);
+
+        for (String line : mavenOutput) {
+            logWriter.write(line);
+            //System.out.println(line);
+        }
         logWriter.close();
 
         if (finalStatus == BuildStatus.TESTS_SUCCEEDED) {
