@@ -251,6 +251,14 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             statusHandler.setStatus(commitHash, "failure");
         }
 
+        String emailMsg = "CI results for " + Util.getRepositoryName(payload) + ":\n\n" 
+                + cloneStatus + "\n" 
+                + buildStatus + "\n" 
+                + testsStatus + "\n\n";
+
+        MailHandler mailHandler = new MailHandler();
+        mailHandler.emailResults("hanhal@kth.se, estolpe@kth.se, abaz@kth.se, tmatts@kth.se", emailMsg);
+
     }
 
     public enum BuildStatus {
