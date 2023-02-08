@@ -2,19 +2,17 @@ package group10;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 
+import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
-import group10.Util;
 
 /**
  * ContinuousIntegrationServer which acts as webhook for CI tasks.
@@ -121,7 +119,19 @@ public class ContinuousIntegrationServer extends AbstractHandler {
      * @param payload the body of the POST request as JSON
      */
     private void runContinuousIntegration(JSONObject payload) {
-        // TODO: git clone -> mvn build -> mvn test -> report results
+        System.out.println("____________________________________________________________");
+        System.out.println("New CI request, running CI for " + Util.getRepositoryName(payload));
+        System.out.println("____________________________________________________________");
+
+        // Updated throughout process
+        BuildStatus finalStatus = BuildStatus.PENDING;
+
+        // Used to keep track of what happened.
+        BuildStatus cloneStatus = BuildStatus.PENDING;
+        BuildStatus buildStatus = BuildStatus.PENDING;
+        BuildStatus testsStatus = BuildStatus.PENDING;
+
+        // Running clone
         System.out.println("Running git clone on " + Util.getCloneURL(payload) + " branch " + Util.getBranch(payload));
         boolean cloneSuccess = true;
         try {
@@ -133,14 +143,45 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         }
 
         if (!cloneSuccess) {
-
+            finalStatus = BuildStatus.CLONE_FAILED;
+            cloneStatus = BuildStatus.CLONE_FAILED;
         }
+        // If clone succeeded, run maven compile
         else {
+            finalStatus = BuildStatus.CLONE_SUCCEEDED;
+            cloneStatus = BuildStatus.CLONE_SUCCEEDED;
 
+            // Running mvn
+            System.out.println("Running mvn compile...");
+
+            MavenRunner mavenRunner = new MavenRunner("./build");
+            finalStatus = mavenRunner.runMvnCompile();
+
+            buildStatus = finalStatus;
+
+            // If compile succeeded, run tests
+            if (finalStatus != BuildStatus.BUILD_FAILED) {
+                System.out.println("Running mvn test...");
+                testsStatus = mavenRunner.runMvnTest();
+            }
         }
 
-        System.out.println("Running mvn build...");
-        System.out.println("Running mvn test...");
-        System.out.println("Result: SUCCESS");
+        System.out.println("____________________________________________________________");
+        System.out.println("Results:");
+        System.out.println(cloneStatus);
+        System.out.println(buildStatus);
+        System.out.println(testsStatus);
+        System.out.println("____________________________________________________________");
     }
+
+    public enum BuildStatus {
+        PENDING,
+        CLONE_SUCCEEDED,
+        CLONE_FAILED,
+        BUILD_SUCCEEDED,
+        BUILD_FAILED,
+        TESTS_SUCCEEDED,
+        TESTS_FAILED
+    }
+
 }
