@@ -15,7 +15,7 @@ public class MavenRunner {
 
     private final Invoker invoker;
 
-    private static final String tempBuildLogFileLocation = "./buildlog.txt";
+    private static final String buildLogFileLocation = "./buildlog.txt";
 
     /**
      * Creates an object for handling running of Maven.
@@ -27,7 +27,7 @@ public class MavenRunner {
         invoker.setLocalRepositoryDirectory(new File(buildPath));
 
         try {
-            PrintStream out = new PrintStream(new FileOutputStream(tempBuildLogFileLocation));
+            PrintStream out = new PrintStream(new FileOutputStream(buildLogFileLocation));
             InvocationOutputHandler outputHandler = new PrintStreamHandler(out, false);
             invoker.setOutputHandler(outputHandler);
         } catch (FileNotFoundException e) {
@@ -43,15 +43,15 @@ public class MavenRunner {
      */
     public ArrayList<String> getBuildLogs() {
         ArrayList<String> lines = new ArrayList<String>();
-        try (BufferedReader br = new BufferedReader(new FileReader(tempBuildLogFileLocation))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(buildLogFileLocation))) {
             String line;
             while ((line = br.readLine()) != null) {
                 lines.add(line);
             }
         } catch (FileNotFoundException e) {
-            System.out.println("Could not find file at " + tempBuildLogFileLocation);
+            System.out.println("Could not find file at " + buildLogFileLocation);
         } catch (IOException e) {
-            System.out.println("Error while reading from temporary build log file.");
+            System.out.println("Error while reading from build log file.");
         }
 
         return lines;
