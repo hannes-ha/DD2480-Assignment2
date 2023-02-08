@@ -24,11 +24,13 @@ public class GitRunner {
         repoDir.mkdir();
 
         // clone the repo from the given branch
-        Git.cloneRepository()
+        Git git = Git.cloneRepository()
                 .setURI(repoURL)
                 .setDirectory(new File("./" + directory))
                 .setBranch("refs/heads/" + branch)
                 .call();
+
+        git.close();
     }
 
     /**
@@ -40,7 +42,6 @@ public class GitRunner {
             for (File subFile : dir.listFiles()) {
                 if (subFile.isDirectory()) deleteDir(subFile);
                 subFile.delete();
-
             }
             dir.delete();
         }
