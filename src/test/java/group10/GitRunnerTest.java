@@ -14,7 +14,7 @@ public class GitRunnerTest {
      */
     @Test
     public void testGitRunner_Invalid() {
-        assertThrows(GitAPIException.class, () -> GitRunner.cloneRepo("", ""));
+        assertThrows(GitAPIException.class, () -> GitRunner.cloneRepo("", "", "test1"));
     }
 
     /**
@@ -24,8 +24,8 @@ public class GitRunnerTest {
      */
     @Test
     public void testGitRunner_Positive() throws GitAPIException {
-        GitRunner.cloneRepo("https://github.com/hannes-ha/DD2480-Assignment2.git", "main");
-        File repoDir = new File("./build");
+        GitRunner.cloneRepo("https://github.com/hannes-ha/DD2480-Assignment2.git", "main", "test2");
+        File repoDir = new File("./repos/test2");
         assertTrue(repoDir.exists());
     }
 }

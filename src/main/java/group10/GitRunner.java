@@ -8,21 +8,22 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 public class GitRunner {
     /**
      * Clones a git repository using the given URL and branch name, and puts it
-     * all in a folder named "/build"
-     * @param repoURL the URL for the repo
-     * @param branch the branch name to clone from
-     * @throws GitAPIException if clone fails
+     * all in a folder whose name is given
+     * @param repoURL repoURL the URL for the repo
+     * @param branch branch the branch name to clone from
+     * @param directory name of the folder to create & clone to
+     * @throws GitAPIException GitAPIException if clone fails
      */
-    public static void cloneRepo(String repoURL, String branch) throws GitAPIException {
+    public static void cloneRepo(String repoURL, String branch, String directory) throws GitAPIException {
         // create new folder to clone repo in (if already exists: delete)
-        File repoDir = new File("./build");
+        File repoDir = new File("./repos/" + directory);
         if (repoDir.exists()) deleteDir(repoDir);
         repoDir.mkdir();
 
         // clone the repo from the given branch
         Git.cloneRepository()
                 .setURI(repoURL)
-                .setDirectory(new File("./build"))
+                .setDirectory(new File("./repos/" + directory))
                 .setBranch("refs/heads/" + branch)
                 .call();
     }
