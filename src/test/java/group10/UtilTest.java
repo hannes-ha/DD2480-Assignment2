@@ -21,7 +21,7 @@ public class UtilTest {
         payload.put("head_commit", headCommitObject);
 
         boolean result = Util.isCommitEvent(payload);
-        assertFalse(result); //incorrect
+        assertTrue(result); 
     }
 
     /**
