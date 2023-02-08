@@ -16,14 +16,14 @@ public class GitRunner {
      */
     public static void cloneRepo(String repoURL, String branch, String directory) throws GitAPIException {
         // create new folder to clone repo in (if already exists: delete)
-        File repoDir = new File("./repos/" + directory);
+        File repoDir = new File("./" + directory);
         if (repoDir.exists()) deleteDir(repoDir);
         repoDir.mkdir();
 
         // clone the repo from the given branch
         Git.cloneRepository()
                 .setURI(repoURL)
-                .setDirectory(new File("./repos/" + directory))
+                .setDirectory(new File("./" + directory))
                 .setBranch("refs/heads/" + branch)
                 .call();
     }
@@ -33,9 +33,13 @@ public class GitRunner {
      * @param dir the directory to delete
      */
     public static void deleteDir(File dir) {
-        for (File subFile : dir.listFiles()) {
-            if (subFile.isDirectory()) deleteDir(subFile);
-            subFile.delete();
+        if (dir.exists()) {
+            for (File subFile : dir.listFiles()) {
+                if (subFile.isDirectory()) deleteDir(subFile);
+                subFile.delete();
+
+            }
+            dir.delete();
         }
     }
 }
