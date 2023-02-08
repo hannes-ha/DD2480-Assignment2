@@ -2,7 +2,8 @@ package group10;
 
 import org.apache.maven.shared.invoker.*;
 
-import java.io.File;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Collections;
 
 import group10.ContinuousIntegrationServer.BuildStatus;
@@ -14,6 +15,8 @@ public class MavenRunner {
 
     private final Invoker invoker;
 
+    private static final String buildLogFileLocation = "./buildlog.txt";
+
     /**
      * Creates an object for handling running of Maven.
      *
@@ -22,6 +25,36 @@ public class MavenRunner {
     public MavenRunner(String buildPath) {
         invoker = new DefaultInvoker();
         invoker.setLocalRepositoryDirectory(new File(buildPath));
+
+        try {
+            PrintStream out = new PrintStream(new FileOutputStream(buildLogFileLocation));
+            InvocationOutputHandler outputHandler = new PrintStreamHandler(out, false);
+            invoker.setOutputHandler(outputHandler);
+        } catch (FileNotFoundException e) {
+            System.out.println("Something went wrong while creating the temporary buildlog.");
+        }
+
+    }
+
+    /**
+     * Gets the full maven output from the build process.
+     *
+     * @return an ArrayList<String> where each element is a line from the output
+     */
+    public ArrayList<String> getBuildLogs() {
+        ArrayList<String> lines = new ArrayList<String>();
+        try (BufferedReader br = new BufferedReader(new FileReader(buildLogFileLocation))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                lines.add(line);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Could not find file at " + buildLogFileLocation);
+        } catch (IOException e) {
+            System.out.println("Error while reading from build log file.");
+        }
+
+        return lines;
     }
 
     /**
@@ -34,7 +67,7 @@ public class MavenRunner {
         InvocationRequest request = new DefaultInvocationRequest();
         request.setGoals(Collections.singletonList("compile"));
         request.setBatchMode(true);
-        request.setQuiet(true);
+        //request.setQuiet(true);
 
         try {
             InvocationResult result = invoker.execute(request);
@@ -58,7 +91,7 @@ public class MavenRunner {
         InvocationRequest request = new DefaultInvocationRequest();
         request.setGoals(Collections.singletonList("test"));
         request.setBatchMode(true);
-        request.setQuiet(true);
+        //request.setQuiet(true);
 
         try {
             InvocationResult result = invoker.execute(request);
