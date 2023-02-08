@@ -3,6 +3,7 @@ package group10;
 import org.apache.maven.shared.invoker.*;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Collections;
 
 import group10.ContinuousIntegrationServer.BuildStatus;
@@ -15,7 +16,7 @@ public class MavenRunner {
     private final Invoker invoker;
     private String buildLogs;
 
-    private static final String tempBuildLogFileLocation = "./buildlog_temp.txt";
+    private static final String tempBuildLogFileLocation = "./buildlog.txt";
 
     /**
      * Creates an object for handling running of Maven.
@@ -39,36 +40,22 @@ public class MavenRunner {
     /**
      * Gets the full maven output from the build process.
      *
-     * @return a String containing the full maven output
+     * @return an ArrayList<String> where each element is a line from the output
      */
-    public String getBuildLogs() {
-        StringBuilder sb = new StringBuilder();
+    public ArrayList<String> getBuildLogs() {
+        ArrayList<String> lines = new ArrayList<String>();
         try (BufferedReader br = new BufferedReader(new FileReader(tempBuildLogFileLocation))) {
             String line;
             while ((line = br.readLine()) != null) {
-                sb.append(line);
+                lines.add(line);
             }
         } catch (FileNotFoundException e) {
             System.out.println("Could not find file at " + tempBuildLogFileLocation);
         } catch (IOException e) {
             System.out.println("Error while reading from temporary build log file.");
         }
-        boolean deleted = deleteTempBuildLog();
-        if (!deleted) {
-            System.out.println("Failed to delete temporary log file.");
-        }
 
-        return sb.toString();
-    }
-
-    /**
-     * Deletes the temporary build log file created.
-     *
-     * @return true if file deleted, else false
-     */
-    private boolean deleteTempBuildLog() {
-        boolean isDeleted = new File(tempBuildLogFileLocation).delete();
-        return isDeleted;
+        return lines;
     }
 
     /**
