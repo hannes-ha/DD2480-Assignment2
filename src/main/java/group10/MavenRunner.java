@@ -14,7 +14,6 @@ import group10.ContinuousIntegrationServer.BuildStatus;
 public class MavenRunner {
 
     private final Invoker invoker;
-    private String buildLogs;
 
     private static final String tempBuildLogFileLocation = "./buildlog.txt";
 
