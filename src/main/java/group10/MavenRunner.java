@@ -39,7 +39,7 @@ public class MavenRunner {
     /**
      * Gets the full maven output from the build process.
      *
-     * @return an ArrayList<String> where each element is a line from the output
+     * @return an ArrayList, of data type String, where each element is a line from the output
      */
     public ArrayList<String> getBuildLogs() {
         ArrayList<String> lines = new ArrayList<String>();

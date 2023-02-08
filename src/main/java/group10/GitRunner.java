@@ -14,7 +14,7 @@ public class GitRunner {
      * all in a folder whose name is given
      * @param repoURL repoURL the URL for the repo
      * @param branch branch the branch name to clone from
-     * @param directory name of the folder to create & clone to
+     * @param directory name of the folder to create and clone to
      * @throws GitAPIException GitAPIException if clone fails
      */
     public static void cloneRepo(String repoURL, String branch, String directory) throws GitAPIException {

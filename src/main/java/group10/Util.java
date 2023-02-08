@@ -5,6 +5,9 @@ import org.json.simple.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+/**
+ * Class providing utility functions for parsing post request payload
+ */
 public class Util {
 
     // Parsing of JSON payload based on: https://gist.github.com/gjtorikian/5171861
