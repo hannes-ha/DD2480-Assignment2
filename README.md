@@ -19,8 +19,12 @@ Maven quickstart [Guide](https://maven.apache.org/guides/getting-started/maven-i
 Amanda:
 
 
-Erik:
-
+Erik (tayloh):
+* Maven project setup
+* Skeleton structure for ContinuousIntegrationServer class (request handling) (POST, GET)
+* Top-level handling of POST requests (parsing request) + Util class for parsing request information + Tests for Util class
+* MavenRunner class for handling running mvn compile, mvn test, and collecting maven output
+* Some parts of runContinuousIntegration() in ContinuousIntegrationServer class
 
 Tobias:
 
