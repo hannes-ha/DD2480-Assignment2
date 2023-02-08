@@ -177,8 +177,9 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         System.out.println("Running git clone on " + Util.getCloneURL(payload) + " branch " + Util.getBranch(payload));
         boolean cloneSuccess = true;
         try {
-            GitRunner.cloneRepo(Util.getCloneURL(payload), Util.getBranch(payload));
-        } catch (Exception e) {
+            GitRunner.cloneRepo(Util.getCloneURL(payload), Util.getBranch(payload), "build");
+        }
+        catch (Exception e) {
             System.out.println(e.getMessage());
             cloneSuccess = false;
         }
