@@ -35,7 +35,7 @@ public class Util {
      */
     public static String getBranch(JSONObject payload) {
         String refValue = (String) payload.get("ref");
-        return refValue.split("/")[2];
+        return refValue.split("refs/heads/")[1];
     }
 
     /**
@@ -74,6 +74,12 @@ public class Util {
             builder.append(readLine);
         }
         return builder.toString();
+    }
+
+    public static String getCommitHash(JSONObject payload) {
+        JSONObject headCommit = (JSONObject) payload.get("head_commit");
+        String id = (String) headCommit.get("id");
+        return id;
     }
 
 }
