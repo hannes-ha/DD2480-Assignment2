@@ -173,13 +173,23 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         BuildStatus buildStatus = BuildStatus.PENDING;
         BuildStatus testsStatus = BuildStatus.PENDING;
 
+        String commitHash = Util.getCommitHash(payload);
+        CommitStatusHandler statusHandler = new CommitStatusHandler();
+        statusHandler.setStatus(commitHash, "pending");
+
+        LogWriter logWriter = new LogWriter();
+        logWriter.write("Commit hash: " + commitHash);
+
         // Running clone
         System.out.println("Running git clone on " + Util.getCloneURL(payload) + " branch " + Util.getBranch(payload));
+        logWriter.write("Running git clone on " + Util.getCloneURL(payload) + " branch " + Util.getBranch(payload));
+
         boolean cloneSuccess = true;
         try {
             GitRunner.cloneRepo(Util.getCloneURL(payload), Util.getBranch(payload));
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            logWriter.write(e.getMessage());
             cloneSuccess = false;
         }
 
@@ -195,7 +205,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
             // Running mvn
             System.out.println("Running mvn compile...");
-
+            logWriter.write("Running mvn compile...");
 
             MavenRunner mavenRunner = new MavenRunner("./build");
             finalStatus = mavenRunner.runMvnCompile();
@@ -205,10 +215,10 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             // If compile succeeded, run tests
             if (finalStatus != BuildStatus.BUILD_FAILED) {
                 System.out.println("Running mvn test...");
+                logWriter.write("Running mvn test...");
                 testsStatus = mavenRunner.runMvnTest();
             }
         }
-
 
         System.out.println("____________________________________________________________");
         System.out.println("Results:");
@@ -216,6 +226,18 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         System.out.println(buildStatus);
         System.out.println(testsStatus);
         System.out.println("____________________________________________________________");
+
+        logWriter.write("Results:");
+        logWriter.write(cloneStatus.toString());
+        logWriter.write(buildStatus.toString());
+        logWriter.write(testsStatus.toString());
+        logWriter.close();
+
+        if (finalStatus == BuildStatus.TESTS_SUCCEEDED) {
+            statusHandler.setStatus(commitHash, "success");
+        } else {
+            statusHandler.setStatus(commitHash, "failure");
+        }
 
     }
 
