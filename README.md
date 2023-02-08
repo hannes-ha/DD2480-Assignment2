@@ -12,7 +12,7 @@ Maven quickstart [Guide](https://maven.apache.org/guides/getting-started/maven-i
 3. mvn test
 4. mvn exec:java
 
-## Way-of-working
+## Team
 
 ## Individual Contributions
 
