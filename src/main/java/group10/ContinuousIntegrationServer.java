@@ -186,8 +186,9 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
         boolean cloneSuccess = true;
         try {
-            GitRunner.cloneRepo(Util.getCloneURL(payload), Util.getBranch(payload));
-        } catch (Exception e) {
+            GitRunner.cloneRepo(Util.getCloneURL(payload), Util.getBranch(payload), "build");
+        }
+        catch (Exception e) {
             System.out.println(e.getMessage());
             logWriter.write(e.getMessage());
             cloneSuccess = false;
