@@ -217,6 +217,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                 System.out.println("Running mvn test...");
                 logWriter.write("Running mvn test...");
                 testsStatus = mavenRunner.runMvnTest();
+                finalStatus = testsStatus;
             }
         }
 
