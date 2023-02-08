@@ -28,6 +28,7 @@ Erik (tayloh):
 * Some parts of runContinuousIntegration() in ContinuousIntegrationServer class
 
 Tobias:
-
+* Handler for git commands (cloning repo & setting directory) + tests
+* Deletion of git directories after use + tests
 
 Hannes:
