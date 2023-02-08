@@ -8,8 +8,16 @@ import java.util.Date;
 import java.util.Properties;
 import org.json.simple.JSONObject;
 
+/**
+ * Class to handle email notification to the project member(s) about results, such as build result.
+ */
 public class MailHandler{
-
+    /**
+     * Handles the notification for a set of email addresses
+     *
+     * @param email the email addresses in format: "abc@example.com" or "abc@example.com, def@example.com"
+     * @param results contains the results to be emailed
+     */
     public void emailResults (String email, String results){
         //Reformation
         String resultsRef = reformatResult(results);
@@ -25,6 +33,12 @@ public class MailHandler{
         m.sendMail(to, resultsRef);
     }
 
+    /**
+     * Handles the notification for the commit author
+     *
+     * @param payload event payload containing the commit information including author's email
+     * @param results contains the results to be emailed
+     */
     public void emailResultsJsonObj (JSONObject payload, String results){
         //Reformation
         String resultsRef = reformatResult(results);
@@ -35,6 +49,12 @@ public class MailHandler{
         m.sendMail(to, resultsRef);
     }
 
+    /**
+     * Reformats the result for the email
+     *
+     * @param results contains the results to be emailed
+     * @return results reformatted
+     */
     private String reformatResult(String results) {
         String [] r = results.split(" ");
         //Format: BUILD TESTS CLONE_SUCCESS
@@ -46,12 +66,24 @@ public class MailHandler{
         return sb.toString();
     }
 
+    /**
+     * gets the authors email address from the payload
+     *
+     * @param payload event payload containing the commit information including author's email
+     * @return the authors email address
+     */
     private String getMailFromPayload(JSONObject payload){
         JSONObject jsonHeadCommit = (JSONObject) payload.get("head_commit");
         JSONObject jsonAuthor = (JSONObject) jsonHeadCommit.get("author");
         return (String) jsonAuthor.get("email");
     }
 
+    /**
+     * Sends the email notification of the results to the given receiver
+     *
+     * @param receiver the email address of the receiver
+     * @param results contains the results to be emailed
+     */
     private void sendMail(String receiver, String results){
         String host = "smtp.gmail.com";
         String port = "587";
