@@ -65,6 +65,7 @@ public class MavenRunner {
      */
     public BuildStatus runMvnCompile() {
         InvocationRequest request = new DefaultInvocationRequest();
+        request.setPomFile( new File( "./build/pom.xml" ) );
         request.setGoals(Collections.singletonList("compile"));
         request.setBatchMode(true);
         //request.setQuiet(true);
@@ -89,6 +90,7 @@ public class MavenRunner {
      */
     public BuildStatus runMvnTest() {
         InvocationRequest request = new DefaultInvocationRequest();
+        request.setPomFile( new File( "./build/pom.xml" ) );
         request.setGoals(Collections.singletonList("test"));
         request.setBatchMode(true);
         //request.setQuiet(true);

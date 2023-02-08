@@ -210,7 +210,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             System.out.println("Running mvn compile...");
             logWriter.write("Running mvn compile...");
 
-            MavenRunner mavenRunner = new MavenRunner("./build");
+            MavenRunner mavenRunner = new MavenRunner("./build/.");
             finalStatus = mavenRunner.runMvnCompile();
 
             buildStatus = finalStatus;
