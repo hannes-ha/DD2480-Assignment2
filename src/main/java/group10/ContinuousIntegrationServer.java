@@ -2,19 +2,20 @@ package group10;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
+import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
-import group10.Util;
 
 /**
  * ContinuousIntegrationServer which acts as webhook for CI tasks.
@@ -35,9 +36,9 @@ public class ContinuousIntegrationServer extends AbstractHandler {
      */
     @Override
     public void handle(String target,
-                       Request baseRequest,
-                       HttpServletRequest request,
-                       HttpServletResponse response)
+            Request baseRequest,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws IOException {
 
         response.setContentType("text/html;charset=utf-8");
@@ -49,11 +50,12 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                 handleGetRequest(request, response, target);
             } else if ("POST".equalsIgnoreCase(requestMethod)) {
                 handlePostRequest(request, response);
+                response.getWriter().println("CI job done");
             }
-            response.getWriter().println("CI job done");
 
         } catch (IOException e) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Something went wrong handling your request.");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "Something went wrong handling your request.");
         }
     }
 
@@ -67,18 +69,55 @@ public class ContinuousIntegrationServer extends AbstractHandler {
      */
     private void handleGetRequest(HttpServletRequest request, HttpServletResponse response, final String target)
             throws IOException {
+        System.out.println(request.getPathInfo());
 
         try {
-            // TODO: GET request logic
-            // Check the target endpoint, provide log or something, if we're going for P+
-            // Otherwise I don't think we even need to handle GET requests at all
+            // if subpath is /history, list all files in history folder
+            if (request.getPathInfo().equals("/history")) {
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.getWriter().println("<h1>History</h1>");
+                File dir = new File("history");
+                File[] files = dir.listFiles();
+                response.getWriter().println("<ul>");
+                for (File file : files) {
+                    if (file.isFile()) {
+                        response.getWriter()
+                                .println(
+                                        "<li><a href='history/" + file.getName() + "'>" + file.getName() + "</a></li>");
+                    }
+                }
+                response.getWriter().println("</ul>");
+                response.getWriter().println("<a href='/'> << Go back</a>");
 
-            response.setStatus(HttpServletResponse.SC_OK);
+                // if its a file in history folder, serve it
+            } else if (request.getPathInfo().matches("/history/.*")) {
+                String filename = request.getPathInfo().substring(9);
+                File file = new File("history/" + filename);
+                String withoutExtension = "";
 
-            // Maybe we should have a logger? The server keeps complaining about SLF4J
-            response.getWriter().println("GET request handled.");
+                // if we cant extract filename, return 404
+                try {
+                    withoutExtension = filename.substring(0, filename.lastIndexOf('.'));
+                } catch (Exception e) {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                }
+                if (file.isFile()) {
+                    response.getWriter().println("<h1>Build log for " + withoutExtension + "</h1>");
+                    response.getWriter().println(Files.readString(Path.of("history/" + filename)));
+                    response.getWriter().println("<a href='/history'> << Back to history</a>");
+                } else {
+                    // if file doesnt exist, return 404
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                }
+            } else {
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.getWriter().println("<h1> CI job done </h1>");
+                response.getWriter().println("<p> You can see the history of builds <a href='/history'>here</a></p>");
+            }
+
         } catch (IOException e) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Something went wrong while handling your GET request.");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "Something went wrong while handling your GET request.");
         }
     }
 
@@ -111,7 +150,8 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             // Maybe replace with a logger
             System.out.println("POST request handled.");
         } catch (ParseException | IOException e) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Something went wrong while handling your POST request.");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "Something went wrong while handling your POST request.");
         }
     }
 
@@ -121,7 +161,19 @@ public class ContinuousIntegrationServer extends AbstractHandler {
      * @param payload the body of the POST request as JSON
      */
     private void runContinuousIntegration(JSONObject payload) {
-        // TODO: git clone -> mvn build -> mvn test -> report results
+        System.out.println("____________________________________________________________");
+        System.out.println("New CI request, running CI for " + Util.getRepositoryName(payload));
+        System.out.println("____________________________________________________________");
+
+        // Updated throughout process
+        BuildStatus finalStatus = BuildStatus.PENDING;
+
+        // Used to keep track of what happened.
+        BuildStatus cloneStatus = BuildStatus.PENDING;
+        BuildStatus buildStatus = BuildStatus.PENDING;
+        BuildStatus testsStatus = BuildStatus.PENDING;
+
+        // Running clone
         System.out.println("Running git clone on " + Util.getCloneURL(payload) + " branch " + Util.getBranch(payload));
         boolean cloneSuccess = true;
         try {
@@ -134,13 +186,48 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
         if (!cloneSuccess) {
 
+            finalStatus = BuildStatus.CLONE_FAILED;
+            cloneStatus = BuildStatus.CLONE_FAILED;
         }
+        // If clone succeeded, run maven compile
         else {
+            finalStatus = BuildStatus.CLONE_SUCCEEDED;
+            cloneStatus = BuildStatus.CLONE_SUCCEEDED;
 
+            // Running mvn
+            System.out.println("Running mvn compile...");
+
+
+            MavenRunner mavenRunner = new MavenRunner("./build");
+            finalStatus = mavenRunner.runMvnCompile();
+
+            buildStatus = finalStatus;
+
+            // If compile succeeded, run tests
+            if (finalStatus != BuildStatus.BUILD_FAILED) {
+                System.out.println("Running mvn test...");
+                testsStatus = mavenRunner.runMvnTest();
+            }
         }
 
-        System.out.println("Running mvn build...");
-        System.out.println("Running mvn test...");
-        System.out.println("Result: SUCCESS");
+
+        System.out.println("____________________________________________________________");
+        System.out.println("Results:");
+        System.out.println(cloneStatus);
+        System.out.println(buildStatus);
+        System.out.println(testsStatus);
+        System.out.println("____________________________________________________________");
+
     }
+
+    public enum BuildStatus {
+        PENDING,
+        CLONE_SUCCEEDED,
+        CLONE_FAILED,
+        BUILD_SUCCEEDED,
+        BUILD_FAILED,
+        TESTS_SUCCEEDED,
+        TESTS_FAILED
+    }
+
 }
