@@ -35,7 +35,7 @@ public class Util {
      */
     public static String getBranch(JSONObject payload) {
         String refValue = (String) payload.get("ref");
-        return refValue.split("/")[2];
+        return refValue.split("refs/heads/")[1];
     }
 
     /**
