@@ -239,9 +239,13 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
         logWriter.write("Maven output (compile & test):");
 
+        StringBuilder sb = new StringBuilder();
         for (String line : mavenOutput) {
             logWriter.write(line);
-            //System.out.println(line);
+
+            if (!(line.contains("Downloaded") || line.contains("Downloading"))) {
+                sb.append(line);
+            }
         }
         logWriter.close();
 
@@ -254,7 +258,8 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         String emailMsg = "CI results for " + Util.getRepositoryName(payload) + ":\n\n" 
                 + cloneStatus + "\n" 
                 + buildStatus + "\n" 
-                + testsStatus + "\n\n";
+                + testsStatus + "\n"
+                + sb.toString() + "\n\n";
 
         MailHandler mailHandler = new MailHandler();
         mailHandler.emailResults("hanhal@kth.se, estolpe@kth.se, abaz@kth.se, tmatts@kth.se", emailMsg);

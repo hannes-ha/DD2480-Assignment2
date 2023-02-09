@@ -56,7 +56,7 @@ public class MailHandler{
      * @return results reformatted
      */
     private String reformatResult(String results) {
-        String [] r = results.split(" ");
+        String [] r = results.split("\\[INFO\\]");
         //Format: BUILD TESTS CLONE_SUCCESS
         StringBuilder sb = new StringBuilder();
         for (String s: r) {
