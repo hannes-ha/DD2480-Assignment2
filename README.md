@@ -1,8 +1,5 @@
 # DD2480 Assignment 2 (CI Server)
-
-The goal of this assignment is to master the core of continuous integration. To achieve this goal, the students are asked to implement a small continuous integration CI server. This CI server will only contain the core features of continuous integration. The features are all specified below, as grading criteria.
-
-The grading focuses on the understanding and implementation of the core CI features, but also considers the application of software engineering on the development process, see the grading scheme below.
+This project is centered around the creation of a Continuous Integration server for GitHub. The purpose of it is to be able to clone any repository and build + run it. By using a webhook on GitHub which is triggered on commits, the server is capable of receiving the latest changes made to any branch and checking if it works, whereafter it reports the result to the author of the commit. The main focus of the project is to implement the core features of a CI server, in order to accomplish this desired result.
 
 ## Build & run or test
 Maven quickstart [Guide](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html)
