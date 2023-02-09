@@ -261,13 +261,37 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
     }
 
+    /**
+     *  Represents a group of BuildStatus constants
+     */
     public enum BuildStatus {
+        /**
+         * Build status is pending
+         */
         PENDING,
+        /**
+         * Build status is that the cloning succeeded
+         */
         CLONE_SUCCEEDED,
+        /**
+         * Build status is that the cloning failed
+         */
         CLONE_FAILED,
+        /**
+         * Build status is that the build succeeded
+         */
         BUILD_SUCCEEDED,
+        /**
+         * Build status is that the build failed
+         */
         BUILD_FAILED,
+        /**
+         * Build status is that the tests succeeded
+         */
         TESTS_SUCCEEDED,
+        /**
+         * Build status is that the tests failed
+         */
         TESTS_FAILED
     }
 

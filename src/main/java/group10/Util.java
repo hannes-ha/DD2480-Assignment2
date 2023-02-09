@@ -5,6 +5,9 @@ import org.json.simple.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+/**
+ * Class providing utility functions for parsing post request payload
+ */
 public class Util {
 
     // Parsing of JSON payload based on: https://gist.github.com/gjtorikian/5171861
@@ -76,6 +79,12 @@ public class Util {
         return builder.toString();
     }
 
+    /**
+     * get the commit hash from the event payload
+     *
+     * @param payload event payload
+     * @return the id of the commit
+     */
     public static String getCommitHash(JSONObject payload) {
         JSONObject headCommit = (JSONObject) payload.get("head_commit");
         String id = (String) headCommit.get("id");
