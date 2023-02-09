@@ -2,13 +2,13 @@
 This project is centered around the creation of a Continuous Integration server for GitHub. The purpose of it is to be able to clone any repository and build + run it. By using a webhook on GitHub which is triggered on commits, the server is capable of receiving the latest changes made to any branch and checking if it works, whereafter it reports the result to the author of the commit. The main focus of the project is to implement the core features of a CI server, in order to accomplish this desired result.
 
 ## For P+
-In order to attain a P+ on this assignment, we have implemented a build log (which contains a history of past build + results) and we have linked most merge commits to an issue. In other words, we claim to have completed tasks p7 and p9.
+In order to attain a P+ on this assignment, we have implemented a build log (which contains a history of past build + results) and we have linked most merge commits to an issue. In other words, we claim to have completed tasks p7 and p9. To access the build log, if running the server locally, visit localhost:8080/, or localhost:8080/history. Each log entry on /history is the date and time of the build, and can be clicked to access the full build results and output.
 
 ## Build & run or test
 Maven quickstart [Guide](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html)
 
 1. Install maven
-2. mvn compile
+2. mvn compile (must be run before exec:java)
 3. mvn test
 4. mvn exec:java
 
