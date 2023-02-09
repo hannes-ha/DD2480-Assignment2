@@ -15,7 +15,8 @@ Going off of the checklist for the Essence standard, we conclude that our team i
 ## Individual Contributions
 
 Amanda:
-
+* Handler for email notifications
+* Generating Javadoc in a browsable format
 
 Erik (tayloh):
 * Maven project setup
