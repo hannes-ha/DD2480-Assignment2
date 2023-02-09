@@ -11,3 +11,5 @@ Maven quickstart [Guide](https://maven.apache.org/guides/getting-started/maven-i
 2. mvn compile
 3. mvn test
 4. mvn exec:java
+
+Hello :)
