@@ -243,7 +243,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         for (String line : mavenOutput) {
             logWriter.write(line);
 
-            if (!line.contains("Downloaded") || !line.contains("Downloading")) {
+            if (!(line.contains("Downloaded") || line.contains("Downloading"))) {
                 sb.append(line);
             }
         }
