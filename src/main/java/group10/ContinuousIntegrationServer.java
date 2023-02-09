@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.eclipse.jetty.server.Request;
@@ -179,6 +180,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
         LogWriter logWriter = new LogWriter();
         logWriter.write("Commit hash: " + commitHash);
+        ArrayList<String> mavenOutput = new ArrayList<String>();
 
         // Running clone
         System.out.println("Running git clone on " + Util.getCloneURL(payload) + " branch " + Util.getBranch(payload));
@@ -208,7 +210,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             System.out.println("Running mvn compile...");
             logWriter.write("Running mvn compile...");
 
-            MavenRunner mavenRunner = new MavenRunner("./build");
+            MavenRunner mavenRunner = new MavenRunner("./build/.");
             finalStatus = mavenRunner.runMvnCompile();
 
             buildStatus = finalStatus;
@@ -220,6 +222,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                 testsStatus = mavenRunner.runMvnTest();
                 finalStatus = testsStatus;
             }
+            mavenOutput = mavenRunner.getBuildLogs();
         }
 
         System.out.println("____________________________________________________________");
@@ -233,6 +236,13 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         logWriter.write(cloneStatus.toString());
         logWriter.write(buildStatus.toString());
         logWriter.write(testsStatus.toString());
+
+        logWriter.write("Maven output (compile & test):");
+
+        for (String line : mavenOutput) {
+            logWriter.write(line);
+            //System.out.println(line);
+        }
         logWriter.close();
 
         if (finalStatus == BuildStatus.TESTS_SUCCEEDED) {
@@ -241,15 +251,47 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             statusHandler.setStatus(commitHash, "failure");
         }
 
+        String emailMsg = "CI results for " + Util.getRepositoryName(payload) + ":\n\n" 
+                + cloneStatus + "\n" 
+                + buildStatus + "\n" 
+                + testsStatus + "\n\n";
+
+        MailHandler mailHandler = new MailHandler();
+        mailHandler.emailResults("hanhal@kth.se, estolpe@kth.se, abaz@kth.se, tmatts@kth.se", emailMsg);
+
     }
 
+    /**
+     *  Represents a group of BuildStatus constants
+     */
     public enum BuildStatus {
+        /**
+         * Build status is pending
+         */
         PENDING,
+        /**
+         * Build status is that the cloning succeeded
+         */
         CLONE_SUCCEEDED,
+        /**
+         * Build status is that the cloning failed
+         */
         CLONE_FAILED,
+        /**
+         * Build status is that the build succeeded
+         */
         BUILD_SUCCEEDED,
+        /**
+         * Build status is that the build failed
+         */
         BUILD_FAILED,
+        /**
+         * Build status is that the tests succeeded
+         */
         TESTS_SUCCEEDED,
+        /**
+         * Build status is that the tests failed
+         */
         TESTS_FAILED
     }
 

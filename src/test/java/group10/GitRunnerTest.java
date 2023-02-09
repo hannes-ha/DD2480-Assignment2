@@ -1,7 +1,7 @@
 package group10;
 
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -42,5 +42,17 @@ public class GitRunnerTest {
         GitRunner.cloneRepo("https://github.com/hannes-ha/DD2480-Assignment2.git", "main", "test2");
         assertTrue(repoDir.exists());
         GitRunner.deleteDir(new File("./test2"));
+    }
+
+    /**
+     * Assert false
+     * Try cloning a repo and deleting it, then check if the directory exists
+     * @throws GitAPIException
+     */
+    @Test
+    public void testGitRunner_CloneRepo_Negative() throws GitAPIException {
+        GitRunner.cloneRepo("https://github.com/hannes-ha/DD2480-Assignment2.git", "main", "test3");
+        GitRunner.deleteDir(new File("./test3"));
+        assertFalse(new File("./test3").exists());
     }
 }
