@@ -20,7 +20,7 @@ public class MailHandler{
      */
     public void emailResults (String email, String results){
         //Reformation
-        String resultsRef = reformatResult(results);
+        //String resultsRef = reformatResult(results);
 
         String to;
         if(email.length() != 0){
@@ -30,7 +30,7 @@ public class MailHandler{
         }
 
         MailHandler m = new MailHandler();
-        m.sendMail(to, resultsRef);
+        m.sendMail(to, results);
     }
 
     /**
@@ -41,12 +41,12 @@ public class MailHandler{
      */
     public void emailResultsJsonObj (JSONObject payload, String results){
         //Reformation
-        String resultsRef = reformatResult(results);
+        //String resultsRef = reformatResult(results);
 
         String to = getMailFromPayload(payload);
 
         MailHandler m = new MailHandler();
-        m.sendMail(to, resultsRef);
+        m.sendMail(to, results);
     }
 
     /**
@@ -56,7 +56,7 @@ public class MailHandler{
      * @return results reformatted
      */
     private String reformatResult(String results) {
-        String [] r = results.split(" ");
+        String [] r = results.split("\n");
         //Format: BUILD TESTS CLONE_SUCCESS
         StringBuilder sb = new StringBuilder();
         for (String s: r) {
