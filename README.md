@@ -32,3 +32,5 @@ Tobias:
 * Deletion of git directories after use + tests
 
 Hannes:
+- Github commit status handler
+- Build history frontend and history doc generator
